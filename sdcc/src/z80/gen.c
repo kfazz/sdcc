@@ -337,6 +337,22 @@ cost2(unsigned int bytes, unsigned int z80_states, unsigned int z180_states, uns
   regalloc_dry_run_cost += bytes;
 }
 
+/*--------------------------------------------------------------------------*/
+/* updateCFA - update the debugger information to reflect the current       */
+/*             connonical frame address relative to the stack pointer       */
+/*--------------------------------------------------------------------------*/
+static void
+updateCFA (void)
+{
+  /* there is no frame unless there is a function */
+  if (!currFunc)
+    return;
+
+  if (options.debug && !regalloc_dry_run)
+    debugFile->writeFrameAddress (NULL,&regsZ80[SP_IDX], 1 + _G.stack.param_offset + _G.stack.pushed);
+}
+//
+
 /*-----------------------------------------------------------------*/
 /* aopRS - asmop in register or on stack                           */
 /*-----------------------------------------------------------------*/
@@ -1150,6 +1166,7 @@ _push (PAIR_ID pairId)
   emit2 ("push %s", _pairs[pairId].name);
   regalloc_dry_run_cost += (pairId == PAIR_IX || pairId == PAIR_IY ? 2 : 1);
   _G.stack.pushed += 2;
+  updateCFA ();
 }
 
 static void
@@ -1162,6 +1179,7 @@ _pop (PAIR_ID pairId)
       _G.stack.pushed -= 2;
       spillPair (pairId);
     }
+    updateCFA ();
 }
 
 static void
@@ -3784,6 +3802,7 @@ static void
 adjustStack (int n, bool af_free, bool bc_free, bool hl_free, bool iy_free)
 {
   _G.stack.pushed -= n;
+  updateCFA ();
 
   if (IS_TLCS90 && abs(n) > (optimize.codeSize ? 2 + (af_free || bc_free || hl_free || iy_free || n < 0) * 2: 1))
     {
@@ -5265,6 +5284,10 @@ genFunction (const iCode * ic)
   bigreturn = (getSize (ftype->next) > 4);
   _G.stack.param_offset += bigreturn * 2;
 
+    if (options.debug && !regalloc_dry_run)
+    debugFile->writeFrameAddress (NULL, &regsZ80[SP_IDX], 1);
+
+
   stackParm = FALSE;
   for (sym = setFirstItem (istack->syms); sym; sym = setNextItem (istack->syms))
     {
@@ -5334,6 +5357,8 @@ genEndFunction (iCode * ic)
   if (IFFUNC_ISNAKED (sym->type) || IFFUNC_ISNORETURN (sym->type))
     {
       emitDebug (IFFUNC_ISNAKED (sym->type) ? "; naked function: No epilogue." : "; _Noreturn function: No epilogue.");
+        if (options.debug && currFunc && !regalloc_dry_run)
+        debugFile->writeEndFunction (currFunc, ic, 0);
       return;
     }
 
@@ -5602,6 +5627,9 @@ genLabel (const iCode * ic)
   /* special case never generate */
   if (IC_LABEL (ic) == entryLabel)
     return;
+
+  if (options.debug && !regalloc_dry_run)
+    debugFile->writeLabel (IC_LABEL (ic), ic);
 
   emitLabelSpill (IC_LABEL (ic));
 }
@@ -13946,6 +13974,8 @@ genZ80Code (iCode * lic)
 #endif
 
   iCode *ic;
+  int clevel = 0;
+  int cblock = 0;
   int cln = 0;
   regalloc_dry_run = FALSE;
 
@@ -13956,10 +13986,11 @@ genZ80Code (iCode * lic)
   memset(z80_regs_preserved_in_calls_from_current_function, 0, sizeof(bool) * (IYH_IDX + 1));
 
   /* if debug information required */
-  if (options.debug && currFunc)
-    {
+  if (options.debug && currFunc && !regalloc_dry_run)
       debugFile->writeFunction (currFunc, lic);
-    }
+
+  if (options.debug && !regalloc_dry_run)
+    debugFile->writeFrameAddress (NULL, NULL, 0); /* have no idea where frame is now */
 
   for (ic = lic; ic; ic = ic->next)
     ic->generated = FALSE;
@@ -13967,6 +13998,14 @@ genZ80Code (iCode * lic)
   /* Generate Code for all instructions */
   for (ic = lic; ic; ic = ic->next)
     {
+        if (ic->level != clevel || ic->block != cblock)
+        {
+          if (options.debug)
+            debugFile->writeScope (ic);
+          clevel = ic->level;
+          cblock = ic->block;
+        }
+
       if (ic->lineno && cln != ic->lineno)
         {
           if (options.debug)
@@ -13988,6 +14027,9 @@ genZ80Code (iCode * lic)
       emit2 ("; iCode %d total cost: %d\n", ic->key, regalloc_dry_run_cost);
 #endif
     }
+
+    if (options.debug)
+    debugFile->writeFrameAddress (NULL, NULL, 0); /* have no idea where frame is now */
 
   /* now we are ready to call the
      peep hole optimizer */

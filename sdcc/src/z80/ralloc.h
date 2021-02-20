@@ -58,7 +58,9 @@ enum
   IY_IDX,
   BC_IDX,
   DE_IDX,
-  HL_IDX
+  HL_IDX,
+  SP_IDX,
+  REGCOUNT
 };
 
 enum
