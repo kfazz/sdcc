@@ -37,6 +37,7 @@
 #define OPTION_CALLEE_SAVES_BC "--callee-saves-bc"
 #define OPTION_PORTMODE        "--portmode="
 #define OPTION_ASM             "--asm="
+#define OPTION_DWARF           "--dwarf"
 #define OPTION_NO_STD_CRT0     "--no-std-crt0"
 #define OPTION_RESERVE_IY      "--reserve-regs-iy"
 #define OPTION_OLDRALLOC       "--oldralloc"
@@ -77,6 +78,8 @@ static char _z80n_defaultRules[] = {
 #include "peeph-z80n.rul"
 };
 
+extern DEBUGFILE dwarf2DebugFile;
+extern int dwarf2FinalizeFile(FILE *);
 
 Z80_OPTS z80_opts;
 
@@ -84,6 +87,7 @@ static OPTION _z80_options[] = {
   {0, OPTION_CALLEE_SAVES_BC, &z80_opts.calleeSavesBC, "Force a called function to always save BC"},
   {0, OPTION_PORTMODE,        NULL, "Determine PORT I/O mode (z80/z180)"},
   {0, OPTION_ASM,             NULL, "Define assembler name (rgbds/asxxxx/isas/z80asm/gas)"},
+  {0, OPTION_DWARF,           NULL, "generate DWARF debugging symbols"},
   {0, OPTION_CODE_SEG,        &options.code_seg, "<name> use this name for the code segment", CLAT_STRING},
   {0, OPTION_CONST_SEG,       &options.const_seg, "<name> use this name for the const segment", CLAT_STRING},
   {0, OPTION_DATA_SEG,        &options.data_seg, "<name> use this name for the data segment", CLAT_STRING},
@@ -185,6 +189,14 @@ static builtins _z80_builtins[] = {
   {"__builtin_memset", "vg*", 3, {"vg*", "i", "Ui"}},
   {NULL, NULL, 0, {NULL}}
 };
+
+static void
+z80_genAssemblerEnd (FILE *of)
+{
+  if (options.dwarf && options.debug)
+    dwarf2FinalizeFile (of);
+}
+
 
 static void
 _z80_init (void)
@@ -655,6 +667,15 @@ _parseOptions (int *pargc, char **argv, int *i)
               return TRUE;
             }
         }
+
+        if (!strcmp (argv[*i], "--dwarf"))
+  {
+    options.dwarf = true;
+    options.debug = true;
+    debugFile = &dwarf2DebugFile;
+    return TRUE;
+  }
+
       else if (!strncmp (argv[*i], OPTION_EMIT_EXTERNS, sizeof (OPTION_EMIT_EXTERNS) - 1))
         {
           port->assembler.externGlobal = 1;
@@ -839,6 +860,16 @@ _mangleSupportFunctionName (const char *original)
   return dbuf_detach_c_str (&dbuf);
 }
 #endif
+
+/*----------------------------------------------------------------------*/
+/* z80_dwarfRegNum - return the DWARF register number for a register.  */
+/*----------------------------------------------------------------------*/
+static int
+z80_dwarfRegNum (const struct reg_info *reg)
+{
+  return reg->rIdx;
+}
+
 
 static const char *
 _getRegName (const struct reg_info *reg)
@@ -1061,7 +1092,18 @@ PORT z80_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 3, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1083,7 +1125,7 @@ PORT z80_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,          /* genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1189,7 +1231,18 @@ PORT z180_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 3, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1211,7 +1264,7 @@ PORT z180_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,          /* genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1316,7 +1369,18 @@ PORT r2k_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 2, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                 /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                        /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1338,7 +1402,7 @@ PORT r2k_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,                         /* no genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1444,7 +1508,18 @@ PORT r2ka_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 2, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                 /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1466,7 +1541,7 @@ PORT r2ka_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,                         /* no genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1572,7 +1647,18 @@ PORT r3ka_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 2, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1594,7 +1680,7 @@ PORT r3ka_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,                         /* no genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1702,7 +1788,18 @@ PORT gbz80_port =
   { NULL, NULL },
   { -1, 0, 0, 2, 0, 4, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1724,7 +1821,7 @@ PORT gbz80_port =
   NULL,
   _keywordsgb,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,          /* genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1830,7 +1927,18 @@ PORT tlcs90_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 2, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1852,7 +1960,7 @@ PORT tlcs90_port =
   NULL,
   _keywordstlcs90,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,          /* genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -1958,7 +2066,18 @@ PORT ez80_z80_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 3, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -1980,7 +2099,7 @@ PORT ez80_z80_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,          /* genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
@@ -2086,7 +2205,18 @@ PORT z80n_port =
   { NULL, NULL },
   { -1, 0, 0, 4, 0, 3, 0 },
   { -1, FALSE },
-  { z80_emitDebuggerSymbol },
+  { z80_emitDebuggerSymbol,
+  {
+        z80_dwarfRegNum,
+      0,                        /* cfiSame */
+      0,                        /* cfiUndef */
+      4,                        /* addressSize */
+      REGCOUNT,                        /* regNumRet */
+      SP_IDX,                   /* regNumSP */
+      -1,                       /* regNumBP */
+      1,                        /* offsetSP */
+  }
+   },
   {
     256,                        /* maxCount */
     3,                          /* sizeofElement */
@@ -2108,7 +2238,7 @@ PORT z80n_port =
   NULL,
   _keywords,
   0,                            /* no assembler preamble */
-  NULL,                         /* no genAssemblerEnd */
+  z80_genAssemblerEnd,                         /* no genAssemblerEnd */
   0,                            /* no local IVT generation code */
   0,                            /* no genXINIT code */
   NULL,                         /* genInitStartup */
