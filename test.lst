@@ -1,0 +1,313 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.1.0 #0 (Linux)
+                                      4 ;--------------------------------------------------------
+q                                     5 	.file	"test.c"
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl	_main
+                                     12 ;--------------------------------------------------------
+                                     13 ; Externals used
+                                     14 ;--------------------------------------------------------
+                                     15 ;--------------------------------------------------------
+                                     16 ; special function registers
+                                     17 ;--------------------------------------------------------
+                                     18 ;--------------------------------------------------------
+                                     19 ; ram data
+                                     20 ;--------------------------------------------------------
+                                     21 	.area	DATA
+                                     22 ;--------------------------------------------------------
+                                     23 ; ram data
+                                     24 ;--------------------------------------------------------
+                                     25 	.area	INITIALIZED
+                                     26 ;--------------------------------------------------------
+                                     27 ; absolute external ram data
+                                     28 ;--------------------------------------------------------
+                                     29 	.area	DABS (ABS)
+                                     30 ;--------------------------------------------------------
+                                     31 ; global & static initialisations
+                                     32 ;--------------------------------------------------------
+                                     33 	.area	HOME
+                                     34 	.area	GSINIT
+                                     35 	.area	GSFINAL
+                                     36 	.area	GSINIT
+                                     37 ;--------------------------------------------------------
+                                     38 ; Home
+                                     39 ;--------------------------------------------------------
+                                     40 	.area	HOME
+                                     41 	.area	HOME
+                                     42 ;--------------------------------------------------------
+                                     43 ; code
+                                     44 ;--------------------------------------------------------
+                                     45 	.area	CODE
+                           000000    46 	Stest$main$0	= .
+                                     47 	.globl	Stest$main$0
+                                     48 ;test.c:1: int main(int argc, int argv)
+                                     49 ;	---------------------------------
+                                     50 ; Function main
+                                     51 ; ---------------------------------
+      000000                         52 _main:
+                           000000    53 	Stest$main$1	= .
+                                     54 	.globl	Stest$main$1
+                           000000    55 	Stest$main$2	= .
+                                     56 	.globl	Stest$main$2
+                                     57 ;test.c:5: return 0;
+      000000 21 00 00         [10]   58 	ld	hl, #0x0000
+                           000003    59 	Stest$main$3	= .
+                                     60 	.globl	Stest$main$3
+                                     61 ;test.c:6: }
+                           000003    62 	Stest$main$4	= .
+                                     63 	.globl	Stest$main$4
+                           000003    64 	Stest$main$5	= .
+                                     65 	.globl	Stest$main$5
+                           000003    66 	XG$main$0$0	= .
+                                     67 	.globl	XG$main$0$0
+      000003 C9               [10]   68 	ret
+                           000004    69 	Stest$main$6	= .
+                                     70 	.globl	Stest$main$6
+                                     71 	.area	CODE
+                                     72 	.area	INITIALIZER
+                                     73 	.area	CABS (ABS)
+                                     74 
+u                                    75 	.area	.debug_line (NOLOAD)
+      000000 D2 00 00 00             76 	.dw	Ldebug_line_end-Ldebug_line_start,0
+      000004                         77 Ldebug_line_start:
+      000004 02 00                   78 	.dw	2
+      000006 B5 00 00 00             79 	.dw	Ldebug_line_stmt-6-Ldebug_line_start,0
+      00000A 01                      80 	.db	1
+      00000B 01                      81 	.db	1
+      00000C FB                      82 	.db	-5
+      00000D 0F                      83 	.db	15
+      00000E 0A                      84 	.db	10
+      00000F 00                      85 	.db	0
+      000010 01                      86 	.db	1
+      000011 01                      87 	.db	1
+      000012 01                      88 	.db	1
+      000013 01                      89 	.db	1
+      000014 00                      90 	.db	0
+      000015 00                      91 	.db	0
+      000016 00                      92 	.db	0
+      000017 01                      93 	.db	1
+      000018 2F 68 6F 6D 65 2F 6B    94 	.ascii	"/home/ken/z180/bin/../share/sdcc/include/z80"
+             65 6E 2F 7A 31 38 30
+             2F 62 69 6E 2F 2E 2E
+             2F 73 68 61 72 65 2F
+             73 64 63 63 2F 69 6E
+             63 6C 75 64 65 2F 7A
+             38 30
+      000044 00                      95 	.db	0
+      000045 2F 68 6F 6D 65 2F 6B    96 	.ascii	"/home/ken/z180/share/sdcc/include/z80"
+             65 6E 2F 7A 31 38 30
+             2F 73 68 61 72 65 2F
+             73 64 63 63 2F 69 6E
+             63 6C 75 64 65 2F 7A
+             38 30
+      00006A 00                      97 	.db	0
+      00006B 2F 68 6F 6D 65 2F 6B    98 	.ascii	"/home/ken/z180/bin/../share/sdcc/include"
+             65 6E 2F 7A 31 38 30
+             2F 62 69 6E 2F 2E 2E
+             2F 73 68 61 72 65 2F
+             73 64 63 63 2F 69 6E
+             63 6C 75 64 65
+      000093 00                      99 	.db	0
+      000094 2F 68 6F 6D 65 2F 6B   100 	.ascii	"/home/ken/z180/share/sdcc/include"
+             65 6E 2F 7A 31 38 30
+             2F 73 68 61 72 65 2F
+             73 64 63 63 2F 69 6E
+             63 6C 75 64 65
+      0000B5 00                     101 	.db	0
+      0000B6 00                     102 	.db	0
+      0000B7 74 65 73 74 2E 63      103 	.ascii	"test.c"
+      0000BD 00                     104 	.db	0
+q                                   105 	.uleb128	0
+q                                   106 	.uleb128	0
+q                                   107 	.uleb128	0
+      0000BE 00                     108 	.db	0
+      0000BF                        109 Ldebug_line_stmt:
+      0000BF 00                     110 	.db	0
+q                                   111 	.uleb128	5
+      0000C0 02                     112 	.db	2
+      0000C1r00r00 00 00            113 	.dw	(Stest$main$0),0
+      0000C5 03                     114 	.db	3
+q                                   115 	.sleb128	0
+      0000C6 01                     116 	.db	1
+      0000C7 09                     117 	.db	9
+      0000C8 00 00                  118 	.dw	Stest$main$2-Stest$main$0
+      0000CA 03                     119 	.db	3
+q                                   120 	.sleb128	4
+      0000CB 01                     121 	.db	1
+      0000CC 09                     122 	.db	9
+      0000CD 03 00                  123 	.dw	Stest$main$3-Stest$main$2
+      0000CF 03                     124 	.db	3
+q                                   125 	.sleb128	1
+      0000D0 01                     126 	.db	1
+      0000D1 09                     127 	.db	9
+      0000D2 01 00                  128 	.dw	1+Stest$main$5-Stest$main$3
+      0000D4 00                     129 	.db	0
+q                                   130 	.uleb128	1
+      0000D5 01                     131 	.db	1
+      0000D6                        132 Ldebug_line_end:
+                                    133 
+u                                   134 	.area	.debug_loc (NOLOAD)
+      000000                        135 Ldebug_loc_start:
+      000000r03r00 00 00            136 	.dw	(Stest$main$4),0
+      000004r04r00 00 00            137 	.dw	(Stest$main$6),0
+      000008 02 00                  138 	.dw	2
+      00000A 72                     139 	.db	114
+q                                   140 	.sleb128	1
+      00000Br00r00 00 00            141 	.dw	(Stest$main$1),0
+      00000Fr03r00 00 00            142 	.dw	(Stest$main$4),0
+      000013 02 00                  143 	.dw	2
+      000015 72                     144 	.db	114
+q                                   145 	.sleb128	1
+      000016 00 00 00 00            146 	.dw	0,0
+      00001A 00 00 00 00            147 	.dw	0,0
+                                    148 
+u                                   149 	.area	.debug_abbrev (NOLOAD)
+      000000                        150 Ldebug_abbrev:
+q                                   151 	.uleb128	3
+q                                   152 	.uleb128	46
+      000000 01                     153 	.db	1
+q                                   154 	.uleb128	3
+q                                   155 	.uleb128	8
+q                                   156 	.uleb128	17
+q                                   157 	.uleb128	1
+q                                   158 	.uleb128	18
+q                                   159 	.uleb128	1
+q                                   160 	.uleb128	63
+q                                   161 	.uleb128	12
+q                                   162 	.uleb128	64
+q                                   163 	.uleb128	6
+q                                   164 	.uleb128	73
+q                                   165 	.uleb128	19
+q                                   166 	.uleb128	0
+q                                   167 	.uleb128	0
+q                                   168 	.uleb128	4
+q                                   169 	.uleb128	5
+      000001 00                     170 	.db	0
+q                                   171 	.uleb128	2
+q                                   172 	.uleb128	10
+q                                   173 	.uleb128	3
+q                                   174 	.uleb128	8
+q                                   175 	.uleb128	73
+q                                   176 	.uleb128	19
+q                                   177 	.uleb128	0
+q                                   178 	.uleb128	0
+q                                   179 	.uleb128	1
+q                                   180 	.uleb128	17
+      000002 01                     181 	.db	1
+q                                   182 	.uleb128	3
+q                                   183 	.uleb128	8
+q                                   184 	.uleb128	16
+q                                   185 	.uleb128	6
+q                                   186 	.uleb128	19
+q                                   187 	.uleb128	11
+q                                   188 	.uleb128	37
+q                                   189 	.uleb128	8
+q                                   190 	.uleb128	0
+q                                   191 	.uleb128	0
+q                                   192 	.uleb128	2
+q                                   193 	.uleb128	36
+      000003 00                     194 	.db	0
+q                                   195 	.uleb128	3
+q                                   196 	.uleb128	8
+q                                   197 	.uleb128	11
+q                                   198 	.uleb128	11
+q                                   199 	.uleb128	62
+q                                   200 	.uleb128	11
+q                                   201 	.uleb128	0
+q                                   202 	.uleb128	0
+q                                   203 	.uleb128	0
+                                    204 
+u                                   205 	.area	.debug_info (NOLOAD)
+      000000 5B 00 00 00            206 	.dw	Ldebug_info_end-Ldebug_info_start,0
+      000004                        207 Ldebug_info_start:
+      000004 02 00                  208 	.dw	2
+      000006r00r00 00 00            209 	.dw	(Ldebug_abbrev),0
+      00000A 04                     210 	.db	4
+q                                   211 	.uleb128	1
+      00000B 74 65 73 74 2E 63      212 	.ascii	"test.c"
+      000011 00                     213 	.db	0
+      000012r00r00 00 00            214 	.dw	(Ldebug_line_start+-4),0
+      000016 01                     215 	.db	1
+      000017 53 44 43 43 20 76 65   216 	.ascii	"SDCC version 4.1.0 #0"
+             72 73 69 6F 6E 20 34
+             2E 31 2E 30 20 23 30
+      00002C 00                     217 	.db	0
+q                                   218 	.uleb128	2
+      00002D 69 6E 74               219 	.ascii	"int"
+      000030 00                     220 	.db	0
+      000031 02                     221 	.db	2
+      000032 05                     222 	.db	5
+q                                   223 	.uleb128	3
+      000033 6D 61 69 6E            224 	.ascii	"main"
+      000037 00                     225 	.db	0
+      000038r00r00 00 00            226 	.dw	(_main),0
+      00003Cr04r00 00 00            227 	.dw	(XG$main$0$0+1),0
+      000040 01                     228 	.db	1
+      000041r00r00 00 00            229 	.dw	(Ldebug_loc_start),0
+      000045 2E 00 00 00            230 	.dw	46,0
+q                                   231 	.uleb128	4
+      000049 02                     232 	.db	2
+      00004A 91                     233 	.db	145
+q                                   234 	.sleb128	2
+      00004B 61 72 67 63            235 	.ascii	"argc"
+      00004F 00                     236 	.db	0
+      000050 2E 00 00 00            237 	.dw	46,0
+q                                   238 	.uleb128	4
+      000054 02                     239 	.db	2
+      000055 91                     240 	.db	145
+q                                   241 	.sleb128	4
+      000056 61 72 67 76            242 	.ascii	"argv"
+      00005A 00                     243 	.db	0
+      00005B 2E 00 00 00            244 	.dw	46,0
+q                                   245 	.uleb128	0
+q                                   246 	.uleb128	0
+q                                   247 	.uleb128	0
+q                                   248 	.uleb128	0
+      00005F                        249 Ldebug_info_end:
+                                    250 
+u                                   251 	.area	.debug_pubnames (NOLOAD)
+      000000 17 00 00 00            252 	.dw	Ldebug_pubnames_end-Ldebug_pubnames_start,0
+      000004                        253 Ldebug_pubnames_start:
+      000004 02 00                  254 	.dw	2
+      000006r00r00 00 00            255 	.dw	(Ldebug_info_start-4),0
+      00000A 5F 00 00 00            256 	.dw	4+Ldebug_info_end-Ldebug_info_start,0
+      00000E 35 00 00 00            257 	.dw	53,0
+      000012 6D 61 69 6E            258 	.ascii	"main"
+      000016 00                     259 	.db	0
+      000017 00 00 00 00            260 	.dw	0,0
+      00001B                        261 Ldebug_pubnames_end:
+                                    262 
+u                                   263 	.area	.debug_frame (NOLOAD)
+      000000 00 00                  264 	.dw	0
+      000002 09 00                  265 	.dw	Ldebug_CIE0_end-Ldebug_CIE0_start
+      000004                        266 Ldebug_CIE0_start:
+      000004 FF FF                  267 	.dw	0xffff
+      000006 FF FF                  268 	.dw	0xffff
+      000008 01                     269 	.db	1
+      000009 00                     270 	.db	0
+q                                   271 	.uleb128	1
+q                                   272 	.sleb128	-1
+      00000A 0F                     273 	.db	15
+      00000B 0C                     274 	.db	12
+q                                   275 	.uleb128	14
+q                                   276 	.uleb128	1
+      00000C 8F                     277 	.db	143
+q                                   278 	.uleb128	1
+      00000D                        279 Ldebug_CIE0_end:
+      00000D 1A 00 00 00            280 	.dw	26,0
+      000011r00r00 00 00            281 	.dw	(Ldebug_CIE0_start-4),0
+      000015r00r00 00 00            282 	.dw	(Stest$main$1),0	;initial loc
+      000019 04 00 00 00            283 	.dw	Stest$main$6-Stest$main$1,0
+      00001D 01                     284 	.db	1
+      00001Er00r00 00 00            285 	.dw	(Stest$main$1),0
+      000022 0E                     286 	.db	14
+q                                   287 	.uleb128	1
+      000023 01                     288 	.db	1
+      000024r03r00 00 00            289 	.dw	(Stest$main$4),0
+      000028 0E                     290 	.db	14
+q                                   291 	.uleb128	1

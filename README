@@ -1,0 +1,18 @@
+z80 Dwarf support testing
+
+
+./configure --disable-mcs51-port --disable-avr-port --disable-ds390-port --disable-ds400-port --disable-hc08-port --disable-pic-port --disable-pic14-port --disable-pic16-port --disable-stm8-port --disable-tlcs90-port --disable-s08-port --disable-pdk14-port --disable-pdk15-port --disable-pdk16-port --disable-ucsim --disable-device-lib --disable-packihx --prefix=$HOME/z180
+
+make
+
+make install
+
+export PATH=$PATH:$HOME/z180
+
+
+
+Usage:
+sdcc --codeseg .text --dwarf --asm=gas -S test.c
+z80-elf-as  -sdcc test.asm
+
+z80-elf-objdump --disassemble -g a.out 
