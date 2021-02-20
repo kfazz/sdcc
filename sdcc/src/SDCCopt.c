@@ -1010,7 +1010,7 @@ convbuiltin (iCode *const ic, eBBlock *ebp)
       /* TODO: Eliminate it, convert any SEND of volatile into DUMMY_READ_VOLATILE. */
       /* For now just convert back to call to make sure any volatiles are read. */
 
-      strcpy(OP_SYMBOL (IC_LEFT (icc))->rname, !strcmp (bif->name, "__builtin_memcpy") ? "___memcpy" : (!strcmp (bif->name, "__builtin_strncpy") ? "_strncpy" : "_memset"));
+      strcpy(OP_SYMBOL (IC_LEFT (icc))->rname, !strcmp (bif->name, "__builtin_memcpy") ? "_memcpy" : (!strcmp (bif->name, "__builtin_strncpy") ? "_strncpy" : "_memset"));
       goto convert;
     }
 
@@ -1020,7 +1020,7 @@ convbuiltin (iCode *const ic, eBBlock *ebp)
       if (bitVectIsZero (OP_USES (IC_RESULT (icc))) && (IS_OP_LITERAL (IC_LEFT (lastparam)) || !strcmp (bif->name, "__builtin_memcpy")))
         return;
       
-      strcpy(OP_SYMBOL (IC_LEFT (icc))->rname, !strcmp (bif->name, "__builtin_memcpy") ? "___memcpy" : (!strcmp (bif->name, "__builtin_strncpy") ? "_strncpy" : "_memset"));
+      strcpy(OP_SYMBOL (IC_LEFT (icc))->rname, !strcmp (bif->name, "__builtin_memcpy") ? "_memcpy" : (!strcmp (bif->name, "__builtin_strncpy") ? "_strncpy" : "_memset"));
       goto convert;
     }
   
@@ -2133,10 +2133,11 @@ optimizeOpWidth (eBBlock ** ebbs, int count)
   int i;
   int change = 0;
   iCode *ic, *newic;
-  iCode *uic, *skipuic;
+  iCode *uic, *lic, *ric, *skipuic;
   sym_link *nextresulttype;
   symbol *sym;
   int resultsize, nextresultsize;
+  unsigned long litval;
 
   // Wide loop counter
   for (i = 0; i < count; i++)
@@ -2326,15 +2327,15 @@ optimizeOpWidth (eBBlock ** ebbs, int count)
             IS_ITEMP (right) && bitVectnBitsOn (OP_DEFS (right)) != 1)
             continue;
 
-          iCode *lic = IS_ITEMP (left) ? hTabItemWithKey (iCodehTab, bitVectFirstBit (OP_DEFS (left))) : 0;
-          iCode *ric = IS_ITEMP (right) ? hTabItemWithKey (iCodehTab, bitVectFirstBit (OP_DEFS (right))) : 0;
+          lic = IS_ITEMP (left) ? hTabItemWithKey (iCodehTab, bitVectFirstBit (OP_DEFS (left))) : 0;
+          ric = IS_ITEMP (right) ? hTabItemWithKey (iCodehTab, bitVectFirstBit (OP_DEFS (right))) : 0;
 
           if (lic)
             {
               if (lic->op != BITWISEAND || !IS_OP_LITERAL (IC_LEFT (lic)) && !IS_OP_LITERAL (IC_RIGHT (lic)))
                 continue;
 
-              unsigned long litval = operandLitValue (IS_OP_LITERAL (IC_LEFT (lic)) ? IC_LEFT (lic) : IC_RIGHT (lic));
+              litval = operandLitValue (IS_OP_LITERAL (IC_LEFT (lic)) ? IC_LEFT (lic) : IC_RIGHT (lic));
 
               if (litval > 0x7f)
                 continue;
@@ -2347,7 +2348,7 @@ optimizeOpWidth (eBBlock ** ebbs, int count)
               if (ric->op != BITWISEAND || !IS_OP_LITERAL (IC_LEFT (ric)) && !IS_OP_LITERAL (IC_RIGHT (ric)))
                 continue;
 
-              unsigned long litval = operandLitValue (IS_OP_LITERAL (IC_LEFT (ric)) ? IC_LEFT (ric) : IC_RIGHT (ric));
+              litval = operandLitValue (IS_OP_LITERAL (IC_LEFT (ric)) ? IC_LEFT (ric) : IC_RIGHT (ric));
 
               if (litval > 0x7f)
                 continue;
