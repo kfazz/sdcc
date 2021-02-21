@@ -12,7 +12,11 @@ export PATH=$PATH:$HOME/z180
 
 
 Usage:
-sdcc --codeseg .text --dwarf --asm=gas -S test.c
+with asz80:
+sdcc --out-fmt-elf test.c
+
+with binutils:
+sdcc --codeseg .text --out-fmt-elf --asm=gas -S test.c
 z80-elf-as  -sdcc test.asm
 
 z80-elf-objdump --disassemble -g a.out 
