@@ -113,6 +113,7 @@ struct  mne     mne[] = {
     {   NULL,   ".odd",         S_BOUNDARY,     0,      O_ODD   },
     {   NULL,   ".bndry",       S_BOUNDARY,     0,      O_BNDRY },
     {	NULL,	".uleb128",	S_ULEB128,	0,	0	},
+    {   NULL,   ".sleb128",     S_SLEB128,      0,      0       },
 /* sdas specific */
     {   NULL,   ".optsdcc",     S_OPTSDCC,      0,      0       },
 /* end sdas specific */
