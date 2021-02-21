@@ -447,12 +447,12 @@ lnkarea(void)
                         /*
                          * Relocatable sections
                          */
-                        if (!is_sdld() || TARGET_IS_Z80 || TARGET_IS_Z180 || TARGET_IS_GB) {
+                        if ((!is_sdld() || TARGET_IS_Z80 || TARGET_IS_Z180 || TARGET_IS_GB) && !( ap->a_flag & A_NOLOAD)) {
                                 if (ap->a_addr == 0)
                                         ap->a_addr = rloc[locIndex];
                         }
                         else if (ap->a_bset == 0) {
-                                if ((TARGET_IS_6808 || TARGET_IS_STM8) && ap->a_flag & A_NOLOAD) {
+                                if ((TARGET_IS_6808 || TARGET_IS_STM8 || TARGET_IS_Z80 || TARGET_IS_Z180) && ap->a_flag & A_NOLOAD) {
                                         locIndex = 2;
                                         ap->a_addr = 0;
                                 }
