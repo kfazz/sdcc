@@ -45,7 +45,7 @@ static const ASM_MAPPING _asxxxx_gb_mapping[] = {
 
 static const ASM_MAPPING _asxxxx_z80_mapping[] = {
     /* We want to prepend the _ */
-    { "area", ".area _%s" },
+    { "area", ".area %s" },
     { "areacode", ".area _%s" },
     { "areadata", ".area _%s" },
     { "areahome", ".area _%s" },
