@@ -731,6 +731,13 @@ elfGenerate (void)
   else if ((TARGET_IS_Z80 || TARGET_IS_Z180))
   {
     ehdr.e_machine = EM_Z80;
+    if (TARGET_IS_Z80)
+    {
+      ehdr.e_flags = 0x01;
+    }
+    else {
+      ehdr.e_flags = 0x02;
+    }
   }
   ehdr.e_phentsize = sizeof (*phdrp);
   ehdr.e_shentsize = sizeof (*shdrp);
