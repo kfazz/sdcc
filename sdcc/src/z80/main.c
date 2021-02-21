@@ -37,7 +37,6 @@
 #define OPTION_CALLEE_SAVES_BC "--callee-saves-bc"
 #define OPTION_PORTMODE        "--portmode="
 #define OPTION_ASM             "--asm="
-#define OPTION_DWARF           "--dwarf"
 #define OPTION_NO_STD_CRT0     "--no-std-crt0"
 #define OPTION_RESERVE_IY      "--reserve-regs-iy"
 #define OPTION_OLDRALLOC       "--oldralloc"
@@ -45,6 +44,7 @@
 #define OPTION_EMIT_EXTERNS    "--emit-externs"
 #define OPTION_LEGACY_BANKING  "--legacy-banking"
 #define OPTION_NMOS_Z80        "--nmos-z80"
+#define OPTION_FORMAT_ELF      "--out-fmt-elf"
 
 static char _z80_defaultRules[] = {
 #include "peeph.rul"
@@ -87,7 +87,6 @@ static OPTION _z80_options[] = {
   {0, OPTION_CALLEE_SAVES_BC, &z80_opts.calleeSavesBC, "Force a called function to always save BC"},
   {0, OPTION_PORTMODE,        NULL, "Determine PORT I/O mode (z80/z180)"},
   {0, OPTION_ASM,             NULL, "Define assembler name (rgbds/asxxxx/isas/z80asm/gas)"},
-  {0, OPTION_DWARF,           NULL, "generate DWARF debugging symbols"},
   {0, OPTION_CODE_SEG,        &options.code_seg, "<name> use this name for the code segment", CLAT_STRING},
   {0, OPTION_CONST_SEG,       &options.const_seg, "<name> use this name for the const segment", CLAT_STRING},
   {0, OPTION_DATA_SEG,        &options.data_seg, "<name> use this name for the data segment", CLAT_STRING},
@@ -98,6 +97,7 @@ static OPTION _z80_options[] = {
   {0, OPTION_EMIT_EXTERNS,    NULL, "Emit externs list in generated asm"},
   {0, OPTION_LEGACY_BANKING,  &z80_opts.legacyBanking, "Use legacy method to call banked functions"},
   {0, OPTION_NMOS_Z80,        &z80_opts.nmosZ80, "Generate workaround for NMOS Z80 when saving IFF2"},
+  {0, OPTION_FORMAT_ELF,      NULL, "Output executable in ELF format" },
   {0, NULL}
 };
 
@@ -193,7 +193,7 @@ static builtins _z80_builtins[] = {
 static void
 z80_genAssemblerEnd (FILE *of)
 {
-  if (options.dwarf && options.debug)
+  if (options.out_fmt == 'E')
     dwarf2FinalizeFile (of);
 }
 
@@ -668,13 +668,12 @@ _parseOptions (int *pargc, char **argv, int *i)
             }
         }
 
-        if (!strcmp (argv[*i], "--dwarf"))
-  {
-    options.dwarf = true;
-    options.debug = true;
-    debugFile = &dwarf2DebugFile;
-    return TRUE;
-  }
+        if (!strcmp(argv[*i], "--out-fmt-elf"))
+        {
+          options.out_fmt = 'E';
+          debugFile = &dwarf2DebugFile;
+          return TRUE;
+        }
 
       else if (!strncmp (argv[*i], OPTION_EMIT_EXTERNS, sizeof (OPTION_EMIT_EXTERNS) - 1))
         {

@@ -44,7 +44,7 @@ struct  mne     mne[] = {
     {   NULL,   "ABS",          S_ATYP,         0,      A_ABS   },
     {   NULL,   "NOPAG",        S_ATYP,         0,      A_NOPAG },
     {   NULL,   "PAG",          S_ATYP,         0,      A_PAG   },
-
+    {	NULL,	"NOLOAD",	S_ATYP,		0,	A_NOLOAD},
 
     {   NULL,   ".page",        S_PAGE,         0,      0       },
     {   NULL,   ".title",       S_HEADER,       0,      O_TITLE },
@@ -112,6 +112,7 @@ struct  mne     mne[] = {
     {   NULL,   ".even",        S_BOUNDARY,     0,      O_EVEN  },
     {   NULL,   ".odd",         S_BOUNDARY,     0,      O_ODD   },
     {   NULL,   ".bndry",       S_BOUNDARY,     0,      O_BNDRY },
+    {	NULL,	".uleb128",	S_ULEB128,	0,	0	},
 /* sdas specific */
     {   NULL,   ".optsdcc",     S_OPTSDCC,      0,      0       },
 /* end sdas specific */

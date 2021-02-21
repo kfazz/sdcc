@@ -75,7 +75,8 @@ enum
   EM_68HC11 = 70,
   EM_68HC12 = 53,
   EM_68HC16 = 69,
-  EM_STM8 = 186
+  EM_STM8 = 186,
+  EM_Z80 = 220,
 };
 
 enum
@@ -718,7 +719,19 @@ elfGenerate (void)
   ehdr.e_ident[EI_VERSION] = 1;
   ehdr.e_ident[EI_PAD] = 8;
   ehdr.e_type = ET_EXEC;
-  ehdr.e_machine = TARGET_IS_STM8 ? EM_STM8 : EM_68HC08; /* FIXME: get rid of hardcoded value - EEP */
+   /* FIXME: get rid of hardcoded value - EEP */
+  if (TARGET_IS_STM8)
+  {
+    ehdr.e_machine = EM_STM8;
+  }
+  else if (TARGET_IS_6808)
+  {
+    ehdr.e_machine = EM_68HC08;
+  }
+  else if ((TARGET_IS_Z80 || TARGET_IS_Z180))
+  {
+    ehdr.e_machine = EM_Z80;
+  }
   ehdr.e_phentsize = sizeof (*phdrp);
   ehdr.e_shentsize = sizeof (*shdrp);
   ehdr.e_ehsize = sizeof (ehdr);
