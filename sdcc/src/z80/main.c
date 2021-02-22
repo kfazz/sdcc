@@ -193,7 +193,7 @@ static builtins _z80_builtins[] = {
 static void
 z80_genAssemblerEnd (FILE *of)
 {
-  if (options.out_fmt == 'E')
+  if (options.out_fmt == 'E' && options.debug)
     dwarf2FinalizeFile (of);
 }
 
